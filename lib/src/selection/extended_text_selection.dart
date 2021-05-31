@@ -449,7 +449,13 @@ class ExtendedTextSelectionState extends State<ExtendedTextSelection>
 
   @override
   void hideToolbar([bool hideHandles = true]) {
-    _selectionOverlay?.hide();
+    if (hideHandles) {
+      // Hide the handles and the toolbar.
+      _selectionOverlay?.hide();
+    } else {
+      // Hide only the toolbar but not the handles.
+      _selectionOverlay?.hideToolbar();
+    }
   }
 
   /// Toggles the visibility of the toolbar.
@@ -635,4 +641,16 @@ class ExtendedTextSelectionState extends State<ExtendedTextSelection>
         inputAction: TextInputAction.newline,
         inputType: TextInputType.multiline,
       );
+
+  @override
+  void userUpdateTextEditingValue(
+      TextEditingValue value, SelectionChangedCause cause) {
+    _selectionOverlay?.update(value);
+    _textInputConnection?.setEditingState(value);
+    if (mounted) {
+      setState(() {
+        _value = value;
+      });
+    }
+  }
 }
